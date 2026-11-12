@@ -32,8 +32,7 @@ $plug = New-Item -ItemType Directory -Force "$stage\BepInEx\plugins\LuminesHapti
 $help = New-Item -ItemType Directory -Force "$stage\BepInEx\plugins\LuminesHaptics\Helper"
 
 Copy-Item "$root\src\LuminesHaptics.Plugin\bin\Release\LuminesHaptics.dll" $plug
-(Get-Content "$root\packaging\README.txt" -Raw).Replace("{VERSION}", $version) |
-    Set-Content "$plug\README.txt" -Encoding UTF8
+Copy-Item "$root\README.md" $plug
 $hb = "$root\src\LuminesHaptics.Helper\bin\Release"
 Copy-Item "$hb\LuminesHapticsHelper.exe", "$hb\LuminesHapticsHelper.exe.config", "$hb\NAudio.Core.dll", "$hb\NAudio.Wasapi.dll" $help
 "NAudio (https://github.com/naudio/NAudio), MIT license:`r`n`r`n" + (Get-Content "$root\third_party\NAudio-LICENSE.txt" -Raw) |
