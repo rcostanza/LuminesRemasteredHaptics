@@ -32,7 +32,7 @@ Again: no game files are included, the mod reads the haptic data from your own g
 
 1. [Download BepInEx 5.4.23.6](https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.6/BepInEx_win_x64_5.4.23.6.zip)
 
-2. [Download this mod](https://github.com/rcostanza/LuminesRemasteredHaptics/releases/latest)
+2. [Download this mod](https://github.com/rcostanza/LuminesRemasteredHaptics/releases/latest) (the file `LuminesHaptics-vX.X.zip`, not the source code)
 
 3. Extract both to the game folder
 
