@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- BepInEx 5 plugin for Lumines Remastered (Unity 5.6, Mono, CLR 2.0 => net35). -->
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>LuminesHaptics</AssemblyName>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Deterministic>true</Deterministic>
+
+    <!-- Overridden by CI from the git tag (v0.1 -> 0.1). Also becomes the BepInPlugin version. -->
+    <Version>0.1.0</Version>
+
+    <!-- BepInEx.dll / 0Harmony.dll location. Default: an installed copy in the game folder.
+         CI passes -p:BepInExCoreDir=... pointing at the official BepInEx release zip's BepInEx\core. -->
+    <GameDir>C:\Program Files (x86)\Steam\steamapps\common\LUMINES REMASTERED</GameDir>
+    <BepInExCoreDir>$(GameDir)\BepInEx\core</BepInExCoreDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(BepInExCoreDir)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCoreDir)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+    <!-- Game assemblies are compiled against hand-written reference stubs (no game files needed or shipped). -->
+    <ProjectReference Include="..\..\stubs\UnityEngine\UnityEngine.csproj" Private="false" />
+    <ProjectReference Include="..\..\stubs\Assembly-CSharp\Assembly-CSharp.csproj" Private="false" />
+  </ItemGroup>
+
+  <!-- Expose $(Version) as a compile-time constant for [BepInPlugin]. -->
+  <Target Name="GenerateBuildInfo" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <BuildInfoFile>$(IntermediateOutputPath)BuildInfo.g.cs</BuildInfoFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(BuildInfoFile)" Overwrite="true" WriteOnlyWhenDifferent="true"
+      Lines="namespace LuminesHaptics { internal static class BuildInfo { public const string Version = &quot;$(Version)&quot;%3B } }" />
+    <ItemGroup>
+      <Compile Include="$(BuildInfoFile)" />
+      <FileWrites Include="$(BuildInfoFile)" />
+    </ItemGroup>
+  </Target>
+</Project>

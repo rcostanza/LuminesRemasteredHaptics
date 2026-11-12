@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{07D4293A-0D98-452F-8859-E68FCD0D737B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuminesHaptics.Plugin", "src\LuminesHaptics.Plugin\LuminesHaptics.Plugin.csproj", "{0C80EC27-A293-4CF7-9C6B-01FABC59D5A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuminesHaptics.Helper", "src\LuminesHaptics.Helper\LuminesHaptics.Helper.csproj", "{435CD573-7166-45A9-9A70-F28F635EB236}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stubs", "stubs", "{30FD8907-8438-4F29-A7CA-67985D044B48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityEngine", "stubs\UnityEngine\UnityEngine.csproj", "{05DDB87A-24F8-45BE-AC61-1B2C338EF1BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "stubs\Assembly-CSharp\Assembly-CSharp.csproj", "{0748AC5F-DF28-498B-A791-DCC75A1FF9CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C80EC27-A293-4CF7-9C6B-01FABC59D5A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C80EC27-A293-4CF7-9C6B-01FABC59D5A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C80EC27-A293-4CF7-9C6B-01FABC59D5A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C80EC27-A293-4CF7-9C6B-01FABC59D5A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{435CD573-7166-45A9-9A70-F28F635EB236}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{435CD573-7166-45A9-9A70-F28F635EB236}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{435CD573-7166-45A9-9A70-F28F635EB236}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{435CD573-7166-45A9-9A70-F28F635EB236}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05DDB87A-24F8-45BE-AC61-1B2C338EF1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05DDB87A-24F8-45BE-AC61-1B2C338EF1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05DDB87A-24F8-45BE-AC61-1B2C338EF1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05DDB87A-24F8-45BE-AC61-1B2C338EF1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0748AC5F-DF28-498B-A791-DCC75A1FF9CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0748AC5F-DF28-498B-A791-DCC75A1FF9CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0748AC5F-DF28-498B-A791-DCC75A1FF9CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0748AC5F-DF28-498B-A791-DCC75A1FF9CD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0C80EC27-A293-4CF7-9C6B-01FABC59D5A3} = {07D4293A-0D98-452F-8859-E68FCD0D737B}
+		{435CD573-7166-45A9-9A70-F28F635EB236} = {07D4293A-0D98-452F-8859-E68FCD0D737B}
+		{05DDB87A-24F8-45BE-AC61-1B2C338EF1BC} = {30FD8907-8438-4F29-A7CA-67985D044B48}
+		{0748AC5F-DF28-498B-A791-DCC75A1FF9CD} = {30FD8907-8438-4F29-A7CA-67985D044B48}
+	EndGlobalSection
+EndGlobal

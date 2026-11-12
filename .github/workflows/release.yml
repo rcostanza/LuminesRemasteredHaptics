@@ -1,0 +1,65 @@
+name: Release
+
+# Push a tag like v0.1, v1.23 or v1.2.3 to build and publish a GitHub release with the drag-and-drop zip.
+# Manual runs (Actions tab > Release > Run workflow) only build and upload the zip as a workflow artifact.
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # create the release
+
+env:
+  # Compile-time references only (BepInEx.dll, 0Harmony.dll); BepInEx is NOT redistributed in our zip.
+  BEPINEX_VERSION: 5.4.23.6
+  BEPINEX_SHA256: 6C57A714A892EFB4E9E1FEF63D608A3391F30EC984031C465404E4EE381A0755
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Fetch BepInEx reference assemblies
+        shell: pwsh
+        run: |
+          $zip = "$env:RUNNER_TEMP\bepinex.zip"
+          Invoke-WebRequest "https://github.com/BepInEx/BepInEx/releases/download/v$env:BEPINEX_VERSION/BepInEx_win_x64_$env:BEPINEX_VERSION.zip" -OutFile $zip
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash
+          if ($hash -ne $env:BEPINEX_SHA256) { throw "BepInEx zip checksum mismatch: $hash" }
+          Expand-Archive $zip "$env:RUNNER_TEMP\bepinex"
+          "BEPINEX_CORE=$env:RUNNER_TEMP\bepinex\BepInEx\core" >> $env:GITHUB_ENV
+
+      - name: Determine version
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $v = $env:GITHUB_REF_NAME.TrimStart('v') }
+          else { $v = ([xml](Get-Content src/LuminesHaptics.Plugin/LuminesHaptics.Plugin.csproj -Raw)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1 }
+          "VERSION=$v" >> $env:GITHUB_ENV
+          "Version: $v"
+
+      - name: Build release zip
+        shell: pwsh
+        run: ./tools/build-release.ps1 -Version $env:VERSION -BepInExCoreDir $env:BEPINEX_CORE
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LuminesHaptics-v${{ env.VERSION }}
+          path: dist/LuminesHaptics-v${{ env.VERSION }}.zip
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/LuminesHaptics-v${{ env.VERSION }}.zip
+          generate_release_notes: true
+          body: |
+            **Install:** install [BepInEx 5 x64](https://github.com/BepInEx/BepInEx/releases) (tested with ${{ env.BEPINEX_VERSION }}), run the game once, then drag the zip's `BepInEx` folder onto the LUMINES REMASTERED folder. Connect the DualSense **by USB**. Full instructions: `BepInEx/plugins/LuminesHaptics/README.txt`.

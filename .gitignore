@@ -1,0 +1,27 @@
+# build output
+bin/
+obj/
+publish/
+*.user
+.vs/
+
+# python
+__pycache__/
+.venv/
+venv/
+
+# contains the game's asset decryption key / local-only tooling
+private/
+
+# never commit game-derived data
+*.bnvib
+*.bnvib.bytes
+*.wav
+decrypted/
+extracted/
+decomp/
+
+# release output
+dist/
+
+.ignore
