@@ -65,6 +65,48 @@ Other settings are in `BepInEx\config\lumines.haptics.cfg`, created on first lau
 
 You shouldn't download random executable files, but the source code for both is right here, so you can inspect, modify, and build yourself.
 
+## Building from source
+
+### Prerequisites
+
+- Windows
+- [.NET SDK 8](https://dotnet.microsoft.com/download/dotnet/8.0) or newer (the projects target .NET Framework 3.5 / 4.8, the reference assemblies are pulled from NuGet automatically)
+- `BepInEx.dll` and `0Harmony.dll` from [BepInEx 5.4.23.6](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.6). Either have BepInEx installed in the game folder, or just extract the BepInEx zip anywhere and point the build at its `BepInEx\core` folder.
+
+No game files are needed to build: the plugin compiles against hand-written stubs in `stubs\`.
+
+### Build the release zip
+
+From the repository root, in PowerShell:
+
+```powershell
+# Uses BepInEx from the default Steam install path of the game
+.\tools\build-release.ps1
+
+# Or point it at any BepInEx\core folder, and optionally set the version
+.\tools\build-release.ps1 -BepInExCoreDir "C:\path\to\BepInEx\core" -Version 0.2
+```
+
+This produces `dist\LuminesHaptics-v<version>.zip`, laid out the same as the official release: extract it to the game folder.
+
+### Build the projects individually
+
+```powershell
+dotnet build src\LuminesHaptics.Plugin -c Release -p:BepInExCoreDir="C:\path\to\BepInEx\core"
+dotnet build src\LuminesHaptics.Helper -c Release
+```
+
+If the game is installed somewhere other than the default Steam folder, you can pass `-p:GameDir="D:\Games\LUMINES REMASTERED"` instead of `BepInExCoreDir`.
+
+Outputs:
+
+- `src\LuminesHaptics.Plugin\bin\Release\LuminesHaptics.dll` goes to `BepInEx\plugins\LuminesHaptics\`
+- `LuminesHapticsHelper.exe`, `LuminesHapticsHelper.exe.config`, `NAudio.Core.dll` and `NAudio.Wasapi.dll` from `src\LuminesHaptics.Helper\bin\Release\` go to `BepInEx\plugins\LuminesHaptics\Helper\`
+
+### Checking the stubs
+
+If you change the plugin or the stubs, run `.\tools\verify-refs.ps1` (optionally with `-GameDir "<game folder>"`) after a Release build. It checks every game type and member the plugin uses actually exists in your real game install with BepInEx.
+
 ## 🤖 AI disclaimer 🤖
 
 Yep, AI made. I'm a programmer but not a game programmer, I have no familiarity with Unity or BepInEx plugins.
