@@ -65,6 +65,44 @@ Other settings are in `BepInEx\config\lumines.haptics.cfg`, created on first lau
 
 You shouldn't download random executable files, but the source code for both is right here, so you can inspect, modify, and build yourself.
 
+### Why an executable is necessary here? Can't you just give me a .dll file like most other Unity mods?
+
+The short answer: a DualSense over USB doesn't take haptics as controller commands. It takes them as audio, and the game's runtime is too old to drive that audio device itself.
+
+<details>
+<summary>Click here for the long answer</summary>
+
+1. On a DualSense, haptics are an audio stream
+
+Over USB the DualSense shows up in Windows as a 4-channel sound device. Channels 3 and 4 drive the left and right voice-coil actuators (src/LuminesHaptics.Helper/DualSenseBackend.cs:6-8). So to "play haptics" you have to:
+
+- find that specific output device by name, ignoring the default speakers (Find(), line 43);
+- open it through WASAPI with a multichannel format (WAVEFORMATEXTENSIBLE, 32-bit float at the device's mix rate);
+- keep generating samples continuously in real time. The helper turns the Switch .bnvib data into two sine waves per side, with 20 ms buffers.
+
+Simple rumble works differently: it's a HID/XInput call, and Steam Input already handles that for the game.
+
+2. The game process can't do this well
+
+- Old runtime. Lumines Remastered runs on Unity 5.6 with old Mono at the CLR 2.0 level, so the plugin targets net35 (LuminesHaptics.Plugin.csproj). NAudio's WASAPI support needs a modern .NET, and the helper targets net48. Doing it in-process would mean hand-writing COM interop for WASAPI against an old Mono with shaky COM support.
+- Unity's audio can't help. Unity sends sound to one output device, mixed for speakers. It can't play 4 channels to a second device such as the controller.
+- Real-time timing. Audio output has to be fed every few milliseconds. Unity's old Mono garbage collector pauses everything when it runs, and inside the game those pauses would cause audible or felt dropouts in the haptics. A separate process with its own high-priority output thread avoids that.
+
+3. A separate process also keeps the game safe
+
+If the audio device disappears (unplugged, sleep, or DS5 Bridge reconnecting), the helper just retries every few seconds (Run(), line 22). The game never has to deal with audio driver errors, and a crash in the helper can't take the game down.
+
+How the pieces fit
+
+- The plugin stays small. It hooks the game's haptic calls, loads the .bnvib data, and starts the helper hidden (CreateNoWindow) with the game's process ID (Plugin.cs:117-133).
+- It then sends play and stop events to the helper over UDP on localhost, port 47812 by default (Program.cs:56).
+- The helper reports whether the DualSense output is open. If it isn't, the plugin falls back to the game's normal rumble.
+- The helper watches the game's process and exits when the game does (Program.cs:44-53).
+
+A side benefit is that the helper can run without the game. --play-file plays a .bnvib file directly for testing. The plugin's comments also describe the helper as the place where other backends, such as Joy-Con, would go later.
+
+</details>
+
 ## Building from source
 
 ### Prerequisites
@@ -115,7 +153,7 @@ Tested by humans though. A human also did type all of this README.
 
 ## FAQ
 
-- Does it work with Joy Cons (Switch 1 or 2) connected to PC through BT?
+- Joy cons (Switch 1 and 2) have HD rumble, it's haptics too. Do they work here?
 
 Not at the moment. It'd be nice, but I don't have Joy Cons at the moment to even try.
 
